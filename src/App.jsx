@@ -1,69 +1,122 @@
 import React, { useRef, useState } from "react";
 
-const ERROR_MESSAGE = "Error. Ingresá un número, nabo.";
+const ERROR_MESSAGE = "Ingresá al menos 2 jugadores para armar los equipos.";
 
 function App() {
-  const [quantityInput, setQuantityInput] = useState("");
-  const [playerCount, setPlayerCount] = useState(null);
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState([""]);
+  const [pastedList, setPastedList] = useState("");
   const [teams, setTeams] = useState(null);
   const [error, setError] = useState("");
   const [copyFeedback, setCopyFeedback] = useState("");
-  const playersFormRef = useRef(null);
+  const pastedListRef = useRef(null);
+  const lastPlayerInputRef = useRef(null);
   const resultsRef = useRef(null);
 
-  function scrollToSection(sectionRef) {
+  function resizePastedList(textarea) {
+    if (!textarea) {
+      return;
+    }
+
+    const styles = window.getComputedStyle(textarea);
+    const lineHeight = Number.parseFloat(styles.lineHeight) || 19.5;
+    const verticalPadding =
+      Number.parseFloat(styles.paddingTop) +
+      Number.parseFloat(styles.paddingBottom);
+    const verticalBorder =
+      Number.parseFloat(styles.borderTopWidth) +
+      Number.parseFloat(styles.borderBottomWidth);
+    const maxHeight = lineHeight * 11 + verticalPadding + verticalBorder;
+
+    if (textarea.getBoundingClientRect().height > maxHeight + 1) {
+      return;
+    }
+
+    textarea.style.height = "auto";
+    const contentHeight = textarea.scrollHeight + verticalBorder;
+    const minHeight = Number.parseFloat(styles.minHeight) || 0;
+    textarea.style.height = `${Math.max(
+      minHeight,
+      Math.min(contentHeight, maxHeight),
+    )}px`;
+    textarea.style.overflowY = contentHeight > maxHeight ? "auto" : "hidden";
+  }
+
+  function parseWhatsAppList(text) {
+    return text
+      .split(/\r?\n/)
+      .map((line) => {
+        const cleanedLine = line
+          .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, "")
+          .trim();
+        const playerMatch = cleanedLine.match(
+          /^(?:\d+\s*[.)-]\s*|[-–—]\s*)(.+)$/,
+        );
+        return playerMatch ? playerMatch[1].trim() : "";
+      })
+      .filter((name) => name.length > 0);
+  }
+
+  function loadWhatsAppList(text) {
+    const names = parseWhatsAppList(text);
+    if (names.length === 0) {
+      setError("No encontré nombres para cargar en la lista.");
+      setPlayers([""]);
+      setPastedList("");
+      setTeams(null);
+      setCopyFeedback("");
+      return;
+    }
+
+    setPlayers([...names, ""]);
+    setTeams(null);
+    setError("");
+    setCopyFeedback("");
+  }
+
+  function scrollToSection(sectionRef, block = "start") {
     window.requestAnimationFrame(() => {
       const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "auto"
         : "smooth";
-      sectionRef.current?.scrollIntoView({ behavior, block: "start" });
+      sectionRef.current?.scrollIntoView({ behavior, block });
     });
   }
 
-  function handleQuantitySubmit(event) {
-    event.preventDefault();
-
-    const count = Number(quantityInput);
-    if (
-      !Number.isSafeInteger(count) ||
-      count < 2 ||
-      quantityInput.trim() === ""
-    ) {
-      setError(ERROR_MESSAGE);
-      setPlayerCount(null);
-      setPlayers([]);
-      setTeams(null);
-      return;
-    }
-
-    setError("");
-    setPlayerCount(count);
-    setPlayers(Array.from({ length: count }, () => ""));
-    setTeams(null);
-    scrollToSection(playersFormRef);
-  }
-
   function handlePlayerChange(index, name) {
-    setPlayers((currentPlayers) =>
-      currentPlayers.map((player, playerIndex) =>
+    const isLastInput = index === players.length - 1;
+    setPlayers((currentPlayers) => {
+      const updatedPlayers = currentPlayers.map((player, playerIndex) =>
         playerIndex === index ? name : player,
-      ),
-    );
+      );
+
+      if (isLastInput && name.length > 0) {
+        updatedPlayers.push("");
+      }
+
+      return updatedPlayers;
+    });
     setTeams(null);
     setError("");
+
+    if (isLastInput && name.length > 0) {
+      scrollToSection(lastPlayerInputRef, "nearest");
+    }
   }
 
   function handleDraw(event) {
     event.preventDefault();
 
-    if (players.some((player) => player.trim() === "")) {
+    const filledPlayers = players
+      .map((player) => player.trim())
+      .filter((player) => player.length > 0);
+
+    if (filledPlayers.length < 2) {
       setError(ERROR_MESSAGE);
       setTeams(null);
       return;
     }
 
-    const shuffledPlayers = [...players];
+    const shuffledPlayers = [...filledPlayers];
     for (let index = shuffledPlayers.length - 1; index > 0; index -= 1) {
       const randomIndex = Math.floor(Math.random() * (index + 1));
       [shuffledPlayers[index], shuffledPlayers[randomIndex]] = [
@@ -128,13 +181,16 @@ function App() {
   }
 
   function handleReset() {
-    setQuantityInput("");
-    setPlayerCount(null);
-    setPlayers([]);
+    setPlayers([""]);
+    setPastedList("");
     setTeams(null);
     setCopyFeedback("");
     setError("");
   }
+
+  const filledPlayerCount = players.filter(
+    (player) => player.trim() !== "",
+  ).length;
 
   return (
     <div className="app-shell">
@@ -154,80 +210,91 @@ function App() {
             <div className="card-heading">
               <span className="step-number">01</span>
               <div>
-                <h2 id="setup-title">¿Cuántos juegan?</h2>
+                <h2 id="setup-title">¿Quiénes juegan?</h2>
               </div>
             </div>
 
-            <form className="quantity-form" onSubmit={handleQuantitySubmit}>
-              <label className="visually-hidden" htmlFor="player-count">
-                Cantidad de jugadores
-              </label>
-              <input
-                id="player-count"
-                type="number"
-                min="1"
-                step="1"
-                inputMode="numeric"
-                placeholder="Ej. 10"
-                value={quantityInput}
-                onChange={(event) => setQuantityInput(event.target.value)}
-              />
-              <button className="button button-dark" type="submit">
-                Confirmar <span aria-hidden="true">→</span>
+            <form className="players-form" onSubmit={handleDraw}>
+              <div className="players-heading">
+                <div>
+                  <p className="section-kicker">UNO POR UNO</p>
+                  <h2>Pasá la lista</h2>
+                </div>
+                <span className="player-count">
+                  {filledPlayerCount} JUGADORES
+                </span>
+              </div>
+
+              <div className="paste-list">
+                <label htmlFor="whatsapp-list">Formato de la lista</label>
+                <p className="paste-list-help">
+                  Un jugador por línea, con número y punto (1. Juan) o guion
+                  (- Juan). Se ignoran títulos y líneas sin ese formato.
+                </p>
+                <textarea
+                  ref={pastedListRef}
+                  id="whatsapp-list"
+                  rows="5"
+                  placeholder="Pegá acá la lista de WhatsApp..."
+                  value={pastedList}
+                  onChange={(event) => {
+                    setPastedList(event.target.value);
+                    setError("");
+                    resizePastedList(event.currentTarget);
+                  }}
+                  onPaste={(event) => {
+                    const text = event.clipboardData.getData("text");
+                    event.preventDefault();
+                    setPastedList(text);
+                    loadWhatsAppList(text);
+                    window.requestAnimationFrame(() => {
+                      resizePastedList(pastedListRef.current);
+                    });
+                  }}
+                />
+                <button
+                  className="button button-outline paste-list-button"
+                  type="button"
+                  onClick={() => loadWhatsAppList(pastedList)}
+                >
+                  Cargar lista
+                </button>
+              </div>
+
+              <div className="players-grid">
+                {players.map((player, index) => (
+                  <div className="player-input" key={index}>
+                    <label htmlFor={`player-${index}`}>
+                      {String(index + 1).padStart(2, "0")}
+                    </label>
+                    <input
+                      ref={
+                        index === players.length - 1
+                          ? lastPlayerInputRef
+                          : null
+                      }
+                      id={`player-${index}`}
+                      type="text"
+                      placeholder={`Nombre del jugador ${index + 1}`}
+                      value={player}
+                      onChange={(event) =>
+                        handlePlayerChange(index, event.target.value)
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {error && (
+                <p className="error-message" role="alert">{error}</p>
+              )}
+
+              <button className="button draw-button" type="submit">
+                <span className="button-ball" aria-hidden="true">⚽</span>
+                Armar equipos
+                <span aria-hidden="true">→</span>
               </button>
             </form>
-
-            {error && (
-              <p className="error-message" role="alert">{error}</p>
-            )}
-
-            {playerCount !== null && (
-              <form
-                className="players-form"
-                onSubmit={handleDraw}
-                ref={playersFormRef}
-              >
-                <div className="players-heading">
-                  <div>
-                    <p className="section-kicker">UNO POR UNO</p>
-                    <h2>Pasá la lista</h2>
-                  </div>
-                  <span className="player-count">{playerCount} JUGADORES</span>
-                </div>
-
-                {playerCount % 2 !== 0 && (
-                  <p className="disclaimer">
-                    La cantidad es impar. Un equipo va a quedar con un jugador
-                    más que el otro.
-                  </p>
-                )}
-
-                <div className="players-grid">
-                  {players.map((player, index) => (
-                    <div className="player-input" key={index}>
-                      <label htmlFor={`player-${index}`}>
-                        {String(index + 1).padStart(2, "0")}
-                      </label>
-                      <input
-                        id={`player-${index}`}
-                        type="text"
-                        placeholder={`Nombre del jugador ${index + 1}`}
-                        value={player}
-                        onChange={(event) =>
-                          handlePlayerChange(index, event.target.value)
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                <button className="button draw-button" type="submit">
-                  <span className="button-ball" aria-hidden="true">⚽</span>
-                  Armar equipos
-                  <span aria-hidden="true">→</span>
-                </button>
-              </form>
-            )}
           </section>
 
           {teams && (

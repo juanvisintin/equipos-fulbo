@@ -154,14 +154,8 @@ button {
   letter-spacing: -0.04em;
 }
 
-.quantity-form {
-  display: flex;
-  gap: 10px;
-  margin: 23px 0 0 56px;
-}
-
-.quantity-form input,
-.player-input input {
+.player-input input,
+.paste-list textarea {
   min-width: 0;
   border: 1px solid #dcded4;
   border-radius: 8px;
@@ -171,18 +165,14 @@ button {
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.quantity-form input:focus,
-.player-input input:focus {
+.player-input input:focus,
+.paste-list textarea:focus {
   border-color: var(--green);
   box-shadow: 0 0 0 3px rgba(49, 92, 66, 0.11);
 }
 
-.quantity-form input {
-  width: 160px;
-  padding: 12px 14px;
-}
-
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: #a2a69d;
 }
 
@@ -251,14 +241,42 @@ input::placeholder {
   white-space: nowrap;
 }
 
-.disclaimer {
-  margin: 0 0 16px;
-  border-left: 3px solid var(--orange);
-  padding: 10px 12px;
-  background: #fbf0e9;
-  color: #805139;
+.paste-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 22px;
+}
+
+.paste-list label {
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.paste-list-help {
+  margin: -5px 0 0;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.paste-list textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  padding: 12px 14px;
+  background: #fffefa;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.paste-list-button {
+  min-height: 38px;
 }
 
 .players-grid {
@@ -497,14 +515,8 @@ input::placeholder {
     border-radius: 12px;
   }
 
-  .quantity-form,
   .players-form {
     margin-left: 0;
-  }
-
-  .quantity-form input {
-    flex: 1;
-    width: 0;
   }
 
   .error-message {

@@ -26,12 +26,12 @@ npm run preview  # Sirve localmente la versión de producción
 
 ## Funcionalidades
 
-- Valida que la cantidad de jugadores sea un entero positivo.
-- Genera un campo de nombre para cada jugador y no permite sortear con nombres vacíos.
+- Comienza con un campo para el primer jugador y agrega automáticamente otro campo al escribir en el último.
+- Descarta los campos vacíos al sortear y requiere al menos dos nombres para armar equipos.
+- Permite pegar listas de WhatsApp, limpiando numeración y caracteres invisibles para cargar los nombres automáticamente; el área crece hasta 11 filas y luego se puede ampliar manualmente.
 - Mezcla los nombres al azar y los distribuye en dos equipos con tamaños equilibrados.
 - Permite copiar los equipos en un formato listo para compartir por WhatsApp, con un enlace a la aplicación.
-- Desplaza suavemente la pantalla hasta el formulario de jugadores y los resultados cuando aparecen; respeta la preferencia de movimiento reducido del dispositivo.
-- Muestra un aviso cuando la cantidad de jugadores es impar.
+- Desplaza suavemente la pantalla hasta los nuevos campos y los resultados; respeta la preferencia de movimiento reducido del dispositivo.
 - Incluye un footer responsivo, separado del contenido y con fondo propio, con enlaces al proyecto y al perfil del desarrollador.
 - Usa `public/icon.png` como icono del sitio.
 - Diseño adaptable a pantallas móviles y de escritorio.
