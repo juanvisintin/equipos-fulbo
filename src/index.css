@@ -131,23 +131,11 @@ button {
 .card-heading {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
 }
 
-.step-number {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-  border-radius: 50%;
-  background: #e9eee5;
-  color: var(--green);
-  font-family: var(--mono);
-  font-size: 12px;
-}
-
-.card-heading h2,
-.players-heading h2 {
+.card-heading h2 {
   margin: 5px 0 0;
   font-family: var(--display);
   font-size: 21px;
@@ -216,18 +204,10 @@ textarea::placeholder {
 }
 
 .players-form {
-  margin: 32px 0 0 56px;
-  padding-top: 25px;
+  margin: 20px 0 0 56px;
+  padding-top: 16px;
   border-top: 1px solid var(--line);
   scroll-margin-block-start: 24px;
-}
-
-.players-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 19px;
 }
 
 .player-count {
@@ -420,6 +400,28 @@ textarea::placeholder {
   background: white;
 }
 
+.button-redraw {
+  min-height: 44px;
+  background: var(--green);
+  color: white;
+}
+
+.button-redraw:hover {
+  background: #274b36;
+  box-shadow: 0 6px 16px rgba(49, 92, 66, 0.16);
+}
+
+.button-change-players {
+  border-color: #d9dbd2;
+  background: transparent;
+  color: var(--muted);
+}
+
+.button-change-players:hover {
+  background: #fffefa;
+  color: var(--ink);
+}
+
 .results-actions {
   display: flex;
   justify-content: center;
@@ -527,10 +529,6 @@ textarea::placeholder {
   .players-grid,
   .team-grid {
     grid-template-columns: 1fr;
-  }
-
-  .players-heading {
-    align-items: flex-end;
   }
 
   .results-actions {

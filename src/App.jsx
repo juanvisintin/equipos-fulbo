@@ -103,19 +103,7 @@ function App() {
     }
   }
 
-  function handleDraw(event) {
-    event.preventDefault();
-
-    const filledPlayers = players
-      .map((player) => player.trim())
-      .filter((player) => player.length > 0);
-
-    if (filledPlayers.length < 2) {
-      setError(ERROR_MESSAGE);
-      setTeams(null);
-      return;
-    }
-
+  function drawTeams(filledPlayers) {
     const shuffledPlayers = [...filledPlayers];
     for (let index = shuffledPlayers.length - 1; index > 0; index -= 1) {
       const randomIndex = Math.floor(Math.random() * (index + 1));
@@ -133,6 +121,30 @@ function App() {
     setCopyFeedback("");
     setError("");
     scrollToSection(resultsRef);
+  }
+
+  function handleDraw(event) {
+    event.preventDefault();
+
+    const filledPlayers = players
+      .map((player) => player.trim())
+      .filter((player) => player.length > 0);
+
+    if (filledPlayers.length < 2) {
+      setError(ERROR_MESSAGE);
+      setTeams(null);
+      return;
+    }
+
+    drawTeams(filledPlayers);
+  }
+
+  function handleRedraw() {
+    drawTeams(
+      players
+        .map((player) => player.trim())
+        .filter((player) => player.length > 0),
+    );
   }
 
   async function handleCopyTeams() {
@@ -208,25 +220,15 @@ function App() {
         <div className="page-shell">
           <section className="draw-card" aria-labelledby="setup-title">
             <div className="card-heading">
-              <span className="step-number">01</span>
-              <div>
-                <h2 id="setup-title">¿Quiénes juegan?</h2>
-              </div>
+              <h2 id="setup-title">Pasá la lista</h2>
+              <span className="player-count">
+                {filledPlayerCount} JUGADORES
+              </span>
             </div>
 
             <form className="players-form" onSubmit={handleDraw}>
-              <div className="players-heading">
-                <div>
-                  <p className="section-kicker">UNO POR UNO</p>
-                  <h2>Pasá la lista</h2>
-                </div>
-                <span className="player-count">
-                  {filledPlayerCount} JUGADORES
-                </span>
-              </div>
-
               <div className="paste-list">
-                <label htmlFor="whatsapp-list">Formato de la lista</label>
+                <label htmlFor="whatsapp-list">Formato</label>
                 <p className="paste-list-help">
                   Un jugador por línea, con número y punto (1. Juan) o guion
                   (- Juan). Se ignoran títulos y líneas sin ese formato.
@@ -235,7 +237,7 @@ function App() {
                   ref={pastedListRef}
                   id="whatsapp-list"
                   rows="5"
-                  placeholder="Pegá acá la lista de WhatsApp..."
+                  placeholder="Pegá acá la lista..."
                   value={pastedList}
                   onChange={(event) => {
                     setPastedList(event.target.value);
@@ -257,7 +259,7 @@ function App() {
                   type="button"
                   onClick={() => loadWhatsAppList(pastedList)}
                 >
-                  Cargar lista
+                  Cargar jugadores 
                 </button>
               </div>
 
@@ -316,11 +318,18 @@ function App() {
               </div>
               <div className="results-actions">
                 <button
-                  className="button button-outline"
+                  className="button button-redraw"
+                  type="button"
+                  onClick={handleRedraw}
+                >
+                  Rearmar equipos con los mismos jugadores
+                </button>
+                <button
+                  className="button button-outline button-change-players"
                   type="button"
                   onClick={handleReset}
                 >
-                  Hacer otro sorteo
+                  Cambiar jugadores
                 </button>
                 <button
                   className="button button-outline button-copy"
