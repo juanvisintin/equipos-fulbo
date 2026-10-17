@@ -35,6 +35,20 @@ body {
     var(--paper);
 }
 
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1 0 auto;
+}
+
 button,
 input {
   font: inherit;
@@ -215,6 +229,7 @@ input::placeholder {
   margin: 32px 0 0 56px;
   padding-top: 25px;
   border-top: 1px solid var(--line);
+  scroll-margin-block-start: 24px;
 }
 
 .players-heading {
@@ -292,6 +307,7 @@ input::placeholder {
 .results {
   padding: 54px 0 0;
   text-align: center;
+  scroll-margin-block-start: 24px;
 }
 
 .results-heading h2 {
@@ -386,6 +402,66 @@ input::placeholder {
   background: white;
 }
 
+.results-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.button-copy {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.button-copy:hover {
+  background: #e9eee5;
+}
+
+.copy-feedback {
+  margin: 12px 0 0;
+  color: var(--green);
+  font-size: 12px;
+}
+
+.site-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 72px;
+  border-top: 1px solid #dce2d7;
+  padding: 36px 20px 30px;
+  background: #e9eee5;
+  color: #858a80;
+  font-size: 12px;
+  text-align: center;
+}
+
+.footer-tagline,
+.footer-credit {
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 2px;
+}
+
+.footer-links a {
+  color: #72796f;
+  text-decoration: none;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.footer-links a:hover {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .visually-hidden {
   position: absolute;
   overflow: hidden;
@@ -442,6 +518,15 @@ input::placeholder {
 
   .players-heading {
     align-items: flex-end;
+  }
+
+  .results-actions {
+    flex-direction: column;
+  }
+
+  .site-footer {
+    margin-top: 52px;
+    padding: 30px 20px 24px;
   }
 }
 
