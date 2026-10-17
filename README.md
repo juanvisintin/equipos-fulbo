@@ -29,9 +29,10 @@ npm run preview  # Sirve localmente la versión de producción
 - Valida que la cantidad de jugadores sea un entero positivo.
 - Genera un campo de nombre para cada jugador y no permite sortear con nombres vacíos.
 - Mezcla los nombres al azar y los distribuye en dos equipos con tamaños equilibrados.
-- Permite copiar los equipos en un formato listo para compartir por WhatsApp.
+- Permite copiar los equipos en un formato listo para compartir por WhatsApp, con un enlace a la aplicación.
+- Desplaza suavemente la pantalla hasta el formulario de jugadores y los resultados cuando aparecen; respeta la preferencia de movimiento reducido del dispositivo.
 - Muestra un aviso cuando la cantidad de jugadores es impar.
-- Incluye enlaces al proyecto y al perfil del desarrollador en un footer responsivo.
+- Incluye un footer responsivo, separado del contenido y con fondo propio, con enlaces al proyecto y al perfil del desarrollador.
 - Usa `public/icon.png` como icono del sitio.
 - Diseño adaptable a pantallas móviles y de escritorio.
 
