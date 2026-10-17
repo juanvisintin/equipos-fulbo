@@ -1,4 +1,4 @@
-# Sorteo para el fulbito
+# Equipos para el fulbo
 
 Aplicación web para cargar los nombres de quienes juegan y sortear dos equipos equilibrados al azar. Si el total es impar, un equipo queda con un jugador más.
 
