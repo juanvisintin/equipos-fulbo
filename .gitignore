@@ -13,7 +13,9 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+main.py
 
 # Operating-system files
 .DS_Store
 Thumbs.db
+
