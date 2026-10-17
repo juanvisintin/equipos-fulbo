@@ -27,7 +27,7 @@ function App() {
     const count = Number(quantityInput);
     if (
       !Number.isSafeInteger(count) ||
-      count < 1 ||
+      count < 2 ||
       quantityInput.trim() === ""
     ) {
       setError(ERROR_MESSAGE);
